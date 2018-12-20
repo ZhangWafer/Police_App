@@ -39,6 +39,8 @@ $.ajax({
                     success:function(result){
                         console.log(result);
 						if (result.Msg=="成功") {
+							localStorage.setItem("Name",result.pcInfo.Name);
+							localStorage.setItem("personId",result.pcInfo.Id);
 							window.location.href=encodeURI("menuPage.html?Name="+result.pcInfo.Name+"&id="+result.pcInfo.Id);
 						} else{
 							alert(result.Msg.toString());
@@ -50,6 +52,7 @@ $.ajax({
                 });
 
 	}
+
 </script>
 </body>
 

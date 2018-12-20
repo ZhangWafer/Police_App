@@ -15,10 +15,10 @@
         <input type="button" class="btn btn-primary " value="订餐" style="width: 200px;font-size: 25px;" onclick="getMenu()"></input>
         </div>
         <div class="text-center" style="margin-top:20px ;">
-        <input type="button" class="btn btn-primary " value="订餐记录" style="width: 200px;font-size: 25px;"></input>
+        <input type="button" class="btn btn-primary " value="取餐" style="width: 200px;font-size: 25px;" onclick="getOrder()"></input>
         </div>
         <div class="text-center" style="margin-top:20px ;">
-        <input type="button" class="btn btn-primary " value="充值" style="width: 200px;font-size: 25px;"></input>
+        <input type="button" class="btn btn-primary " value="个人账户" style="width: 200px;font-size: 25px;"></input>
         </div>
     </form>
 	</body>
@@ -35,11 +35,18 @@
 		 　　　 Request[strs[i ].split("=")[0]]=unescape(strs[ i].split("=")[1]);
 		　　}
 		}
-		$("#h1").text("你好!   "+Request["Name"].toString());
-
+		$("#h1").text("你好!   "+localStorage.getItem("Name"));
+		var personId=localStorage.getItem("personId");
 		//ajax拿取排餐数据
 		function getMenu () {
-			window.location.href="OrderPage.html?id="+Request["id"];
+			window.location.href="OrderPage.html?id="+personId;
 		}
+		
+		//跳转取餐页面
+		function getOrder () {
+			window.location.href="QrcodePage.html?id="+personId;
+		}
+		
+		
 	</script>
 </html>

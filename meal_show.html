@@ -12,6 +12,11 @@
 		
 </head>
 	<body background="img/login-bg.png">
+		<div  style="margin-top:10px ;">
+			<a href="menuPage.html" style="color: white;">
+			<span class="glyphicon glyphicon-chevron-left" style="font-size: 15px;"></span><h4 style="display: inline;">返回</h4>
+			</a>
+        </div>
     	<h1 id="h1" class="text-center"style="margin-bottom: 50px; color: white;" >选择订餐类别 </h1>
 		<div class="text-center">
 		<div class="btn-group">
@@ -49,6 +54,9 @@
 		str_date_num.pop(-1);
 		
 		//ajax拿取Msg数据
+		var priceArray=[];
+		var catArray=[];
+		var idValueArray=[];
 		var menu_url="http://localhost:7029/Interface/PC/GetPcCookbookSetInDate.ashx?pcid="+Pcid;
 		function getMenu () {
 			$.ajax({
@@ -78,8 +86,16 @@
 								case 4:
 								LB_name="夜宵";
 								}
+							idValueArray[index]= result.pccsidList[numberdd].Id;
 							$("#select1").append("<option value='"+result.pccsidList[numberdd].Id+"'>"+LB_name+"-"+result.pccsidList[numberdd].CookbookStandardName+"</option>");
 						})
+						
+						//餐厅名字和价格存到数组
+						for(var i=0;i<result.pccsidList.length;i++)
+						{
+							catArray[i]=result.pccsidList[i].CafeteriaName;
+							priceArray[i]=result.pccsidList[i].PcPrice;
+						}
                     },
                     error:function(result){
                         console.log(result);
@@ -100,10 +116,13 @@
 					async:false,
                     crossDomain: true, 
                     success:function(result){
-					decideNum=$("#select1").val();
+					decideNum=idValueArray.indexVf($("#select1").val());
+					var pcprice=priceArray[decideNum];
+					var catname=catArray[decideNum];
 					//将菜单添加到屏幕上显示
 					$("#block").empty();
-					$("#block").append("<h5  class='text-center' style='margin-bottom: 15px; color: white;' >价格：10元 </h5>");
+					$("#block").append("<h5  class='text-center' style='margin-bottom: 15px; color: white;' >价格："+pcprice+"元 </h5>");
+					$("#block").append("<h5  class='text-center' style='margin-bottom: 15px; color: white;' >地点："+catname+"</h5>");
 					$("#block").append("<h5 class='text-center' style='margin-bottom: 15px; color: white;' >菜品如下 </h5>");
 					for(var i=0;i<result.detaliList.length;i++)
 					{
@@ -117,8 +136,9 @@
 				});
 		}
 		//发送订单请求并跳转到成功页面
+		var decideNum2=$("#select1").val();
 		function putOrder () {
-			var success_url="http://localhost:7029/Interface/PC/PCStaffOrderMeal.ashx?pcid="+Pcid+"&cookbookSetInDateId="+decideNum;
+			var success_url="http://localhost:7029/Interface/PC/PCStaffOrderMeal.ashx?pcid="+Pcid+"&cookbookSetInDateId="+decideNum2;
 			$.ajax({
                     url: success_url,
                     data:{'new':'ssss'},
@@ -138,5 +158,14 @@
 				}});
 		}
 		
+		    //查找制定元素在数组中的索引值
+	        Array.prototype.indexVf=function(arr){
+	            for(var i=0;i<this.length;i++){
+	                if(this[i]==arr){
+	                    return i;
+	                }
+	            }
+	        }
+    
 	</script>
 </html>

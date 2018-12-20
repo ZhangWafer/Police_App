@@ -2,6 +2,12 @@
   "index.html": {
     "refer": [
       "index.html"
+    ],
+    "resources": []
+  },
+  "QrcodePage.html": {
+    "refer": [
+      "menuPage.html"
     ]
   }
 }
