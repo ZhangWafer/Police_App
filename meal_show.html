@@ -54,10 +54,21 @@
 		str_date_num.pop(-1);
 		
 		//ajax拿取Msg数据
-		var priceArray=[];
+		var priceArray=[];//警察价格
+		var workerPriceArray=[];//职工价格
 		var catArray=[];
 		var idValueArray=[];
-		var menu_url="http://localhost:7029/Interface/PC/GetPcCookbookSetInDate.ashx?pcid="+Pcid;
+		//拿取cookie，看是警员还是职工
+		var PcBool=localStorage.getItem("PcWorkerBool");
+		if(PcBool==1)
+		{
+			var menu_url="http://localhost:7029/Interface/PC/GetPcCookbookSetInDate.ashx?pcid="+Pcid;
+		}
+		else
+		{
+			var menu_url="http://localhost:7029/Interface/Worker/GetWorkerCookbookSetInDate.ashx?WorkerId="+Pcid;
+		}
+		
 		function getMenu () {
 			$.ajax({
                     url:menu_url,
@@ -95,6 +106,7 @@
 						{
 							catArray[i]=result.pccsidList[i].CafeteriaName;
 							priceArray[i]=result.pccsidList[i].PcPrice;
+							workerPriceArray[i]=result.pccsidList[i].WorkerPrice;
 						}
                     },
                     error:function(result){
@@ -107,7 +119,14 @@
 		//显示详细信息
 		var decideNum;
 		function getInformation () {
-			var Detial_url="http://localhost:7029/Interface/PC/GetPcCookbookSetInDateDetail.ashx?csdId="+$("#select1").val();
+			if	(PcBool==1)
+			{
+				var Detial_url="http://localhost:7029/Interface/PC/GetPcCookbookSetInDateDetail.ashx?csdId="+$("#select1").val();
+			}
+			else
+			{
+				var Detial_url="http://localhost:7029/Interface/Worker/GetWorkerCookbookSetInDateDetail.ashx?csdId="+$("#select1").val();
+			}
 			$.ajax({
                     url: Detial_url,
                     data:{'new':'ssss'},
@@ -121,7 +140,15 @@
 					var catname=catArray[decideNum];
 					//将菜单添加到屏幕上显示
 					$("#block").empty();
-					$("#block").append("<h5  class='text-center' style='margin-bottom: 15px; color: white;' >价格："+pcprice+"元 </h5>");
+					//区分警察和职工的不同价格
+					if(PcBool==1)
+					{
+						$("#block").append("<h5  class='text-center' style='margin-bottom: 15px; color: white;' >价格："+pcprice+"元 </h5>");
+					}
+					else
+					{
+						$("#block").append("<h5  class='text-center' style='margin-bottom: 15px; color: white;' >价格："+workerPriceArray[decideNum]+"元 </h5>");
+					}
 					$("#block").append("<h5  class='text-center' style='margin-bottom: 15px; color: white;' >地点："+catname+"</h5>");
 					$("#block").append("<h5 class='text-center' style='margin-bottom: 15px; color: white;' >菜品如下 </h5>");
 					for(var i=0;i<result.detaliList.length;i++)
@@ -138,7 +165,15 @@
 		//发送订单请求并跳转到成功页面
 		var decideNum2=$("#select1").val();
 		function putOrder () {
-			var success_url="http://localhost:7029/Interface/PC/PCStaffOrderMeal.ashx?pcid="+Pcid+"&cookbookSetInDateId="+decideNum2;
+			if	(PcBool==1)
+			{
+				var success_url="http://localhost:7029/Interface/PC/PCStaffOrderMeal.ashx?pcid="+Pcid+"&cookbookSetInDateId="+decideNum2;
+			}
+			else
+			{
+				var success_url="http://localhost:7029/Interface/Worker/WorkerStaffOrderMeal.ashx?workerId="+Pcid+"&cookbookSetInDateId="+decideNum2;
+			}
+			
 			$.ajax({
                     url: success_url,
                     data:{'new':'ssss'},
@@ -147,7 +182,7 @@
 					async:false,
                     crossDomain: true, 
                     success:function(result){
-					if(result.Msg=="普通订餐成功")
+					if(result.Msg=="普通订餐成功"||result.Msg=="成功")
 					{
 						window.location.href="success.html";
 					}

@@ -64,8 +64,18 @@
 		
 		//选择日期数组
 		var selectdays=[];
+		//从cookie看是警员还是职工
+		var PcBool=localStorage.getItem("PcWorkerBool");
 		//ajax拿取排餐数据
-		var menu_url="http://localhost:7029/Interface/PC/GetPcCookbookSetInDate.ashx?pcid="+Request["id"];
+		if(PcBool==1)
+		{
+			var menu_url="http://localhost:7029/Interface/PC/GetPcCookbookSetInDate.ashx?pcid="+Request["id"];
+		}
+		else
+		{
+			var menu_url="http://localhost:7029/Interface/Worker/GetWorkerCookbookSetInDate.ashx?WorkerId="+Request["id"];
+		}
+		
 		function getMenu () {
 			$.ajax({
                     url:menu_url,
